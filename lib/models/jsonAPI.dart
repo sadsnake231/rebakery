@@ -11,7 +11,9 @@ class JsonAPI {
     String json = jsonEncode(item);
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/recipes.txt');
-    await file.writeAsString('$json\n', mode: FileMode.append);
+    final List<String> lines = await file.readAsLines();
+    lines.add(json);
+    await file.writeAsString(lines.join('\n'));
   }
 
   static Future<List<Recipe>> loadFromJson() async{
@@ -35,6 +37,11 @@ class JsonAPI {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/recipes.txt');
     final List<String> lines = await file.readAsLines();
+    for (var i = 0; i < lines.length; i++){
+      if (lines[i] == ''){
+        lines.removeAt(i);
+      }
+    }
     lines.removeAt(index);
     await file.writeAsString(lines.join('\n'));
   }
@@ -43,8 +50,14 @@ class JsonAPI {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/recipes.txt');
     final List<String> lines = await file.readAsLines();
+    for (var i = 0; i < lines.length; i++){
+      if (lines[i] == ''){
+        lines.removeAt(i);
+      }
+    }
     String json = jsonEncode(item);
     lines[index] = '$json\n';
     await file.writeAsString(lines.join('\n'));
   }
+
 }

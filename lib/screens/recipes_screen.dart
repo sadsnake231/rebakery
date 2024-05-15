@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rebakery/screens/recipe_item_screen.dart';
+import '../models/recipe_tile.dart';
 import 'empty_recipes_screen.dart';
-import 'recipes_list_screen.dart';
 import '../models/models.dart';
 
 class RecipesScreen extends StatefulWidget {
@@ -41,6 +41,7 @@ class _RecipesScreenState extends State<RecipesScreen>{
 
   @override
   Widget build(BuildContext context) {
+    int a = 0;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -53,7 +54,10 @@ class _RecipesScreenState extends State<RecipesScreen>{
                       JsonAPI.writeToJson(item);
                       Navigator.pop(context);
                     },
-                    onUpdate: (item) {}
+                    onUpdate: (item) {},
+                    onDelete: () {
+                      Navigator.pop(context);
+                    },
                   ),
               ),
           );
@@ -65,14 +69,54 @@ class _RecipesScreenState extends State<RecipesScreen>{
 
   Widget buildRecipesScreen() {
     _loadItems();
-    /*if (_recipes.isNotEmpty) {
-      return RecipesListScreen(recipes: _recipes);
+    if (_recipes.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.separated(
+          itemCount: _recipes.length,
+          itemBuilder: (context, index) {
+            final item = _recipes[index];
+            return Container(
+              child: InkWell(
+                child: RecipeTile(
+                  key: Key(item.id),
+                  recipe: item,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeItemScreen(
+                          originalItem: item,
+                          onUpdate: (item) {
+                            JsonAPI.updateInJson(item, index);
+                            Navigator.pop(context);
+                          },
+                          onCreate: (item) {
+                          },
+                          onDelete: () {
+                            JsonAPI.deleteInJson(index);
+                            Navigator.pop(context);
+                          }
+                      ),
+                    ),
+                  );
+                  _loadItems();
+                },
+              ),
+            );
+
+          },
+          separatorBuilder: (context, index) {
+            return const SizedBox(height: 16.0);
+          },
+        ),
+      );
     } else {
       return const EmptyRecipesScreen();
       }
 
-    */
 
-    return RecipesListScreen(recipes: _recipes);
+
   }
 }
