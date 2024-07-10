@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,6 +24,7 @@ class Recipe{
   final String name;
   final String ingredients;
   final String cooking;
+  Color color = Colors.transparent;
 
   Recipe({
     required this.id,

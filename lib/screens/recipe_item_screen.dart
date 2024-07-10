@@ -92,7 +92,7 @@ class RecipeItemScreenState extends State<RecipeItemScreen>{
               if (widget.isUpdating){
                 widget.onUpdate(recipe);
               } else {
-                JsonAPI.writeToJson(recipe);
+                JsonAPI.writeRecipeToJson(recipe);
                 widget.onCreate(recipe);
               }
               },

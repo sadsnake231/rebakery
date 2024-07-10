@@ -33,7 +33,7 @@ class RecipesListScreen extends StatelessWidget {
                     color: Colors.white, size: 50.0)),
             onDismissed: (direction) {
               recipes.removeAt(index);
-              JsonAPI.deleteInJson(index);
+              JsonAPI.deleteRecipeInJson(index);
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Рецепт удален!')));
             },
@@ -49,7 +49,7 @@ class RecipesListScreen extends StatelessWidget {
                     builder: (context) => RecipeItemScreen(
                       originalItem: item,
                       onUpdate: (item) {
-                        JsonAPI.updateInJson(item, index);
+                        JsonAPI.updateRecipeInJson(item, index);
                         Navigator.pop(context);
                       },
                       onCreate: (item) {

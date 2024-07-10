@@ -3,6 +3,7 @@ import 'package:rebakery/screens/recipe_item_screen.dart';
 import 'empty_recipes_screen.dart';
 import 'recipes_list_screen.dart';
 import '../models/models.dart';
+import '../models/recipe_tile.dart';
 
 class RecipesScreen extends StatefulWidget {
   const RecipesScreen({super.key});
@@ -32,7 +33,7 @@ class _RecipesScreenState extends State<RecipesScreen>{
       }
     }
     */
-    var temp_recipes = await JsonAPI.loadFromJson();
+    var temp_recipes = await JsonAPI.loadRecipeFromJson();
     setState(() {
       _recipes = temp_recipes;
     });
@@ -50,7 +51,7 @@ class _RecipesScreenState extends State<RecipesScreen>{
               MaterialPageRoute(
                   builder: (context) => RecipeItemScreen(
                     onCreate: (item) {
-                      JsonAPI.writeToJson(item);
+                      JsonAPI.writeRecipeToJson(item);
                       Navigator.pop(context);
                     },
                     onUpdate: (item) {}
@@ -73,6 +74,54 @@ class _RecipesScreenState extends State<RecipesScreen>{
 
     */
 
-    return RecipesListScreen(recipes: _recipes);
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.separated(
+        itemCount: _recipes.length,
+        itemBuilder: (context, index) {
+          final item = _recipes[index];
+          return Dismissible(
+            key: Key(item.id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                child: const Icon(Icons.delete_forever,
+                    color: Colors.white, size: 50.0)),
+            onDismissed: (direction) {
+              _recipes.removeAt(index);
+              JsonAPI.deleteRecipeInJson(index);
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Рецепт удален!')));
+            },
+            child: InkWell(
+              child: RecipeTile(
+                key: Key(item.id),
+                recipe: item,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeItemScreen(
+                      originalItem: item,
+                      onUpdate: (item) {
+                        JsonAPI.updateRecipeInJson(item, index);
+                        Navigator.pop(context);
+                      },
+                      onCreate: (item) {
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(height: 16.0);
+        },
+      ),
+    );
   }
 }
