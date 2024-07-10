@@ -10,14 +10,18 @@ import '../models/models.dart';
 class RecipeItemScreen extends StatefulWidget {
   final Function(Recipe) onCreate;
   final Function(Recipe) onUpdate;
+  final Function() onDelete;
   final Recipe? originalItem;
   final bool isUpdating;
+  final int? index;
 
   const RecipeItemScreen({
     super.key,
     required this.onCreate,
     required this.onUpdate,
+    required this.onDelete,
     this.originalItem,
+    this.index,
   })  : isUpdating = (originalItem != null);
 
   @override
@@ -79,6 +83,12 @@ class RecipeItemScreenState extends State<RecipeItemScreen>{
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              widget.onDelete();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
